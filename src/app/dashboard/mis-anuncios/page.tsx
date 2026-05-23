@@ -1,20 +1,29 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import DeleteListingButton from "@/components/DeleteListingButton";
+import { isDemoMode, mockMyListings } from "@/lib/mock-data";
+import { Listing } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function MisAnunciosPage() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let listings: Listing[] = [];
 
-  if (!user) return null;
+  if (isDemoMode()) {
+    listings = mockMyListings;
+  } else {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
 
-  const { data: listings } = await supabase
-    .from("listings")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+    const { data } = await supabase
+      .from("listings")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    listings = (data || []) as Listing[];
+  }
 
   return (
     <div>
@@ -28,7 +37,7 @@ export default async function MisAnunciosPage() {
         </Link>
       </div>
 
-      {!listings || listings.length === 0 ? (
+      {listings.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
           <p className="text-gray-500">No tienes anuncios publicados.</p>
           <Link
@@ -55,7 +64,7 @@ export default async function MisAnunciosPage() {
                 <p className="text-lg font-bold">{listing.price}€/mes</p>
                 <p className="text-sm text-gray-500 line-clamp-1">{listing.description}</p>
               </div>
-              <DeleteListingButton listingId={listing.id} />
+              {!isDemoMode() && <DeleteListingButton listingId={listing.id} />}
             </div>
           ))}
         </div>

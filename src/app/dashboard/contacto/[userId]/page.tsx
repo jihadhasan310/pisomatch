@@ -1,6 +1,8 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { isDemoMode, mockUsers } from "@/lib/mock-data";
+import { UserProfile } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -10,24 +12,40 @@ interface PageProps {
 
 export default async function ContactoPage({ params }: PageProps) {
   const { userId } = await params;
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let targetUser: UserProfile | null = null;
+  let currentUserPremium = false;
 
-  if (!user) redirect("/login");
+  if (isDemoMode()) {
+    targetUser = mockUsers.find((u) => u.id === userId) || mockUsers[0];
+  } else {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
 
-  // Check if current user has profile
-  const { data: currentProfile } = await supabase
-    .from("users")
-    .select("premium")
-    .eq("id", user.id)
-    .single();
+    const { data: currentProfile } = await supabase
+      .from("users")
+      .select("premium")
+      .eq("id", user.id)
+      .single();
 
-  // Get target user
-  const { data: targetUser } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", userId)
-    .single();
+    currentUserPremium = currentProfile?.premium || false;
+
+    const { data } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    targetUser = data as UserProfile | null;
+
+    if (targetUser) {
+      await supabase.from("contacts").insert({
+        user_id: user.id,
+        target_user_id: userId,
+        method: "view",
+      });
+    }
+  }
 
   if (!targetUser) {
     return (
@@ -39,13 +57,6 @@ export default async function ContactoPage({ params }: PageProps) {
       </div>
     );
   }
-
-  // Log contact
-  await supabase.from("contacts").insert({
-    user_id: user.id,
-    target_user_id: userId,
-    method: "view",
-  });
 
   const whatsappMessage = encodeURIComponent(
     `Hola ${targetUser.name}, te encontré en PisoMatch y me interesa tu anuncio.`
@@ -75,7 +86,7 @@ export default async function ContactoPage({ params }: PageProps) {
             Contactar por WhatsApp
           </a>
           <a
-            href={`https://t.me/`}
+            href="https://t.me/"
             target="_blank"
             rel="noopener noreferrer"
             className="block text-center bg-blue-500 text-white rounded-lg py-3 text-sm font-medium hover:bg-blue-600"
@@ -90,7 +101,7 @@ export default async function ContactoPage({ params }: PageProps) {
           </a>
         </div>
 
-        {!currentProfile?.premium && (
+        {!currentUserPremium && (
           <p className="text-xs text-gray-400 text-center mt-4">
             Con Premium tienes contactos ilimitados y más visibilidad.
           </p>
