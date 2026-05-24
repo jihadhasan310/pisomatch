@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 export default function Footer() {
   return (
@@ -6,8 +7,8 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="font-[family-name:var(--font-playfair)] font-bold text-lg mb-3">PisoMatch</h3>
-            <p className="text-xs text-gray-400">
+            <Logo href="/" size="sm" />
+            <p className="text-xs text-gray-400 mt-3">
               Encuentra tu compañero de piso ideal en España.
             </p>
           </div>

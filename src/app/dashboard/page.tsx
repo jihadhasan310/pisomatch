@@ -44,12 +44,13 @@ export default async function DashboardPage() {
 
   if (!profile) {
     return (
-      <div className="text-center py-16">
-        <h1 className="text-2xl font-[family-name:var(--font-playfair)] font-bold mb-4">Completa tu perfil</h1>
-        <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
-          Para ver matches y publicar anuncios necesitas completar tu perfil primero.
+      <div className="text-center py-20">
+        <span className="text-5xl mb-6 block">👋</span>
+        <h1 className="text-3xl font-[family-name:var(--font-playfair)] font-bold mb-3">Bienvenido a PisoMatch</h1>
+        <p className="text-gray-400 text-sm mb-8 max-w-sm mx-auto leading-relaxed">
+          Completa tu perfil para que podamos encontrar compañeros de piso compatibles contigo.
         </p>
-        <Link href="/dashboard/perfil" className="bg-black text-white px-6 py-2.5 text-xs font-medium uppercase tracking-wider hover:bg-gray-800">
+        <Link href="/dashboard/perfil" className="bg-black text-white px-8 py-3 text-xs font-medium uppercase tracking-[0.2em] hover:bg-gray-800 inline-block">
           Completar perfil
         </Link>
       </div>
@@ -60,22 +61,23 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <div className="flex items-end justify-between mb-8 pb-6 border-b border-gray-100">
         <div>
-          <h1 className="text-2xl font-[family-name:var(--font-playfair)] font-bold">Tus matches</h1>
-          <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Ordenados por compatibilidad</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-1">Dashboard</p>
+          <h1 className="text-3xl font-[family-name:var(--font-playfair)] font-bold">Tus matches</h1>
         </div>
         <Link
           href="/dashboard/mis-anuncios/nuevo"
-          className="bg-black text-white px-4 py-2 text-xs font-medium uppercase tracking-wider hover:bg-gray-800"
+          className="bg-black text-white px-5 py-2.5 text-[10px] font-medium uppercase tracking-[0.2em] hover:bg-gray-800 flex items-center gap-2"
         >
-          Publicar anuncio
+          <span className="text-sm">+</span> Publicar
         </Link>
       </div>
 
       {isDemoMode() && (
-        <div className="mb-6 border border-gray-200 px-4 py-3 text-xs text-gray-500">
-          Modo demo — datos de ejemplo.
+        <div className="mb-6 border border-dashed border-gray-300 px-4 py-3 text-xs text-gray-400 text-center">
+          Modo demo — datos de ejemplo
         </div>
       )}
 
