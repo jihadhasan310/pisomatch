@@ -369,6 +369,48 @@ const target = {
 
 ---
 
+## Upload de Imágenes
+
+### Flujo de subida
+
+1. Usuario selecciona hasta 5 fotos en el formulario de nuevo anuncio
+2. Se muestran previews locales (URL.createObjectURL)
+3. Al publicar, cada imagen se sube a Supabase Storage (`listing-images` bucket)
+4. Las URLs públicas se guardan en el campo `images[]` del listing
+5. La primera imagen se muestra como cover en el ListingCard
+
+### Configuración de Storage
+
+Ejecutar `supabase/storage.sql` en el SQL Editor:
+- Crea bucket público `listing-images`
+- Permite upload a usuarios autenticados
+- Permite lectura pública (para mostrar en cards)
+- Permite borrado solo de imágenes propias (por carpeta user_id)
+
+### Estructura de archivos en Storage
+
+```
+listing-images/
+├── {user_id}/
+│   ├── 1716000000000-abc123.jpg
+│   ├── 1716000000001-def456.png
+│   └── ...
+```
+
+---
+
+## Protección de Perfil
+
+### Flujo de verificación
+
+Las páginas de anuncios verifican si el usuario tiene perfil creado:
+- Si NO tiene perfil → muestra mensaje + botón "Crear perfil"
+- Si SÍ tiene perfil → muestra contenido normal
+
+Esto evita que usuarios sin perfil publiquen anuncios (el matching no funcionaría sin datos de compatibilidad).
+
+---
+
 ## Contacto y Soporte
 
 Para reportar bugs o sugerir features, abre un issue en el repositorio.

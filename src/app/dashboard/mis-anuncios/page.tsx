@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function MisAnunciosPage() {
   let listings: Listing[] = [];
+  let hasProfile = true;
 
   if (isDemoMode()) {
     listings = mockMyListings;
@@ -16,33 +17,58 @@ export default async function MisAnunciosPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
 
-    const { data } = await supabase
-      .from("listings")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+    // Check if profile exists
+    const { data: profile } = await supabase
+      .from("users")
+      .select("id")
+      .eq("id", user.id)
+      .single();
 
-    listings = (data || []) as Listing[];
+    if (!profile) {
+      hasProfile = false;
+    } else {
+      const { data } = await supabase
+        .from("listings")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      listings = (data || []) as Listing[];
+    }
+  }
+
+  if (!hasProfile) {
+    return (
+      <div className="text-center py-16">
+        <h1 className="text-2xl font-[family-name:var(--font-playfair)] font-bold mb-4">Primero completa tu perfil</h1>
+        <p className="text-gray-400 text-sm mb-8 max-w-md mx-auto">
+          Necesitas un perfil para publicar anuncios. Así otros usuarios podrán ver tu compatibilidad.
+        </p>
+        <Link href="/dashboard/perfil" className="bg-black text-white px-6 py-2.5 text-xs font-medium uppercase tracking-wider hover:bg-gray-800">
+          Crear perfil
+        </Link>
+      </div>
+    );
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold">Mis anuncios</h1>
+        <h1 className="text-2xl font-[family-name:var(--font-playfair)] font-bold">Mis anuncios</h1>
         <Link
           href="/dashboard/mis-anuncios/nuevo"
-          className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800"
+          className="bg-black text-white px-4 py-2 text-xs font-medium uppercase tracking-wider hover:bg-gray-800"
         >
           Nuevo anuncio
         </Link>
       </div>
 
       {listings.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-gray-100">
-          <p className="text-gray-500">No tienes anuncios publicados.</p>
+        <div className="text-center py-16 border border-gray-200">
+          <p className="text-gray-400 text-sm">No tienes anuncios publicados.</p>
           <Link
             href="/dashboard/mis-anuncios/nuevo"
-            className="inline-block mt-4 text-sm text-black font-medium hover:underline"
+            className="inline-block mt-4 text-xs text-black font-medium uppercase tracking-wider hover:underline"
           >
             Publicar tu primer anuncio
           </Link>
@@ -52,17 +78,27 @@ export default async function MisAnunciosPage() {
           {listings.map((listing) => (
             <div
               key={listing.id}
-              className="bg-white border border-gray-100 rounded-xl p-5 flex items-center justify-between"
+              className="bg-white border border-gray-200 p-5 flex items-center justify-between hover:border-black"
             >
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-medium bg-gray-100 px-2 py-0.5 rounded">
-                    {listing.type === "ofrezco" ? "Ofrezco" : "Busco"}
-                  </span>
-                  <span className="text-sm font-medium">{listing.city}</span>
+              <div className="flex items-center gap-4">
+                {listing.images && listing.images.length > 0 && (
+                  <img
+                    src={listing.images[0]}
+                    alt=""
+                    className="w-16 h-16 object-cover border border-gray-100"
+                  />
+                )}
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                      {listing.type === "ofrezco" ? "Ofrezco" : "Busco"}
+                    </span>
+                    <span className="text-xs text-gray-400">·</span>
+                    <span className="text-sm font-medium">{listing.city}</span>
+                  </div>
+                  <p className="text-lg font-bold">{listing.price}€/mes</p>
+                  <p className="text-sm text-gray-400 line-clamp-1">{listing.description}</p>
                 </div>
-                <p className="text-lg font-bold">{listing.price}€/mes</p>
-                <p className="text-sm text-gray-500 line-clamp-1">{listing.description}</p>
               </div>
               {!isDemoMode() && <DeleteListingButton listingId={listing.id} />}
             </div>

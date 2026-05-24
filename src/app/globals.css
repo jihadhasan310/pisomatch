@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+@theme {
+  --color-cream: #f9f9f7;
+  --color-warm: #f3f3f0;
+  --color-sand: #e0e0dc;
+  --color-ink: #111111;
+  --color-muted: #555555;
+  --color-accent: #111111;
+  --color-accent-hover: #333333;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
