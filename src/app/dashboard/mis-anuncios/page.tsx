@@ -75,34 +75,44 @@ export default async function MisAnunciosPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {listings.map((listing) => (
+          {listings.map((listing) => {
+            const coverImage = listing.images && listing.images.length > 0 && listing.images[0] !== "" ? listing.images[0] : null;
+            return (
             <div
               key={listing.id}
-              className="bg-white border border-gray-200 p-5 flex items-center justify-between hover:border-black"
+              className="bg-white border border-gray-200 p-4 flex items-center gap-4 hover:border-black"
             >
-              <div className="flex items-center gap-4">
-                {listing.images && listing.images.length > 0 && (
-                  <img
-                    src={listing.images[0]}
-                    alt=""
-                    className="w-16 h-16 object-cover border border-gray-100"
-                  />
-                )}
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium uppercase tracking-wider text-gray-400">
-                      {listing.type === "ofrezco" ? "Ofrezco" : "Busco"}
-                    </span>
-                    <span className="text-xs text-gray-400">·</span>
-                    <span className="text-sm font-medium">{listing.city}</span>
-                  </div>
-                  <p className="text-lg font-bold">{listing.price}€/mes</p>
-                  <p className="text-sm text-gray-400 line-clamp-1">{listing.description}</p>
+              {/* Thumbnail */}
+              {coverImage ? (
+                <img
+                  src={coverImage}
+                  alt=""
+                  className="w-24 h-24 object-cover border border-gray-100 flex-shrink-0"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-gray-100 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                  <span className="text-[10px] text-gray-300 uppercase">Sin foto</span>
                 </div>
+              )}
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                    {listing.type === "ofrezco" ? "Ofrezco" : "Busco"}
+                  </span>
+                  <span className="text-xs text-gray-400">·</span>
+                  <span className="text-sm font-medium">{listing.city}</span>
+                </div>
+                <p className="text-lg font-bold">{listing.price}€/mes</p>
+                <p className="text-sm text-gray-400 line-clamp-1">{listing.description}</p>
               </div>
+
+              {/* Delete */}
               {!isDemoMode() && <DeleteListingButton listingId={listing.id} />}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

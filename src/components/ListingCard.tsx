@@ -9,11 +9,11 @@ interface ListingCardProps {
 export default function ListingCard({ listing, currentUserPremium }: ListingCardProps) {
   const user = listing.user;
   const typeLabel = listing.type === "ofrezco" ? "Ofrezco" : "Busco";
-  const coverImage = listing.images && listing.images.length > 0 ? listing.images[0] : null;
+  const coverImage = listing.images && listing.images.length > 0 && listing.images[0] !== "" ? listing.images[0] : null;
 
   return (
     <div className="bg-white border border-gray-200 flex flex-col hover:border-black overflow-hidden">
-      {/* Cover image */}
+      {/* Cover image - only show if exists */}
       {coverImage && (
         <div className="aspect-[4/3] w-full overflow-hidden">
           <img
@@ -56,10 +56,10 @@ export default function ListingCard({ listing, currentUserPremium }: ListingCard
         <div className="mt-auto pt-3 border-t border-gray-100">
           {currentUserPremium || listing.matchScore >= 50 ? (
             <Link
-              href={`/dashboard/contacto/${listing.user_id}`}
+              href={`/dashboard/anuncio/${listing.id}`}
               className="block text-center bg-black text-white py-2 text-xs font-medium uppercase tracking-wider hover:bg-gray-800"
             >
-              Contactar
+              Ver detalle
             </Link>
           ) : (
             <p className="text-center text-xs text-gray-400 italic">
