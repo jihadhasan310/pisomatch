@@ -19,6 +19,41 @@ export const mockCurrentUser: UserProfile = {
   premium: false,
   last_active: new Date().toISOString(),
   created_at: "2024-01-15T10:00:00Z",
+  clean_level: "normal",
+  sleep_schedule: "normal",
+  work_from_home: true,
+  guests_ok: true,
+  couples_ok: true,
+  gender_pref: "any",
+  age_min: 22,
+  age_max: 35,
+  age: 28,
+  occupation: "Diseñador",
+  move_in_date: "2025-02",
+  min_stay_months: 6,
+  shared_meals: true,
+  music_ok: true,
+  lgbtq_friendly: true,
+  vegan_vegetarian: false,
+};
+
+const defaultPrefs = {
+  clean_level: "normal" as const,
+  sleep_schedule: "normal" as const,
+  work_from_home: false,
+  guests_ok: true,
+  couples_ok: true,
+  gender_pref: "any" as const,
+  age_min: 18,
+  age_max: 99,
+  age: 27,
+  occupation: "",
+  move_in_date: "",
+  min_stay_months: 6,
+  shared_meals: false,
+  music_ok: true,
+  lgbtq_friendly: true,
+  vegan_vegetarian: false,
 };
 
 export const mockUsers: UserProfile[] = [
@@ -28,7 +63,7 @@ export const mockUsers: UserProfile[] = [
     smoking: false, pets: false, premium: true,
     description: "Diseñadora gráfica, 26 años.",
     last_active: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    created_at: "2024-02-01T10:00:00Z",
+    created_at: "2024-02-01T10:00:00Z", ...defaultPrefs, age: 26, occupation: "Diseñadora", clean_level: "strict",
   },
   {
     id: "user-3", email: "carlos@test.com", name: "Carlos Ruiz",
@@ -36,7 +71,7 @@ export const mockUsers: UserProfile[] = [
     smoking: false, pets: true, premium: false,
     description: "Ingeniero de software, trabajo remoto. Tengo un gato.",
     last_active: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    created_at: "2024-01-20T10:00:00Z",
+    created_at: "2024-01-20T10:00:00Z", ...defaultPrefs, age: 30, occupation: "Ingeniero", work_from_home: true, sleep_schedule: "late",
   },
   {
     id: "user-4", email: "marta@test.com", name: "Marta López",
@@ -44,7 +79,7 @@ export const mockUsers: UserProfile[] = [
     smoking: false, pets: false, premium: true,
     description: "Profesora de yoga, 30 años.",
     last_active: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    created_at: "2024-03-01T10:00:00Z",
+    created_at: "2024-03-01T10:00:00Z", ...defaultPrefs, age: 30, occupation: "Profesora", vegan_vegetarian: true, shared_meals: true,
   },
   {
     id: "user-5", email: "pablo@test.com", name: "Pablo Fernández",
@@ -52,7 +87,7 @@ export const mockUsers: UserProfile[] = [
     smoking: true, pets: false, premium: false,
     description: "DJ y productor musical.",
     last_active: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(),
-    created_at: "2024-02-15T10:00:00Z",
+    created_at: "2024-02-15T10:00:00Z", ...defaultPrefs, age: 25, occupation: "DJ", sleep_schedule: "late", music_ok: true, clean_level: "relaxed",
   },
   {
     id: "user-6", email: "ana@test.com", name: "Ana Martín",
@@ -60,7 +95,7 @@ export const mockUsers: UserProfile[] = [
     smoking: false, pets: false, premium: false,
     description: "Estudiante de medicina, 23 años.",
     last_active: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    created_at: "2024-03-10T10:00:00Z",
+    created_at: "2024-03-10T10:00:00Z", ...defaultPrefs, age: 23, occupation: "Estudiante", sleep_schedule: "early", clean_level: "strict",
   },
 ];
 
